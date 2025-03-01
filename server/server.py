@@ -55,6 +55,40 @@ def login():
     finally:
         conn.close()
         cursor.close()
+        
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    fname = data.get('first_name')
+    lname = data.get('last_name')
+    contact_number = data.get('contact_number')
+    email = data.get('email')
+    password = data.get('password')
+    
+    hashed_pass = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM user_list WHERE email = %s', (email,))
+        user = cursor.fetchone()
+        
+        if user:
+            return jsonify({'message': 'email already used'}), 409
+        
+        cursor.execute(
+        'INSERT INTO user_list (first_name, last_name, contact_number, email, password) VALUES (%s, %s, %s, %s, %s)', 
+        (fname, lname, contact_number, email, hashed_pass)
+        )
+        cursor.commit() 
+        return jsonify ({'message': 'registered successfully!'}), 200
+        
+    except Exception as e:
+            return jsonify({'error': f'Registration Failed: {str(e)}'}), 500
+        
+        
+        
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)
