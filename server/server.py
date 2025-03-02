@@ -13,7 +13,7 @@ bcrypt = Bcrypt(app)
 
 # 🔐 Secure Session Configuration
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_USE_SIGNER"] = True
 app.secret_key = os.getenv("SECRET_KEY")
 
@@ -43,7 +43,7 @@ def get_db_conn():
 # Debug DB connection
 get_db_conn()
 
-### 🚀 LOGIN ROUTE
+#login
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -72,18 +72,58 @@ def login():
         return jsonify({'error': f'Error: {str(e)}'}), 500
 
     finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+        cursor.close()
+        conn.close()
+        
+#register
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    fname = data.get('first_name')
+    lname = data.get('last_name')
+    contact_number = data.get('contact_number')
+    email = data.get('email')
+    password = data.get('password')
+    
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    conn = get_db_conn()
+    cursor = conn.cursor()
+    
+    #check if email already used
+    try:
+        cursor.execute('SELECT * FROM user_list WHERE email = %s', 
+        (email,))
+        user = cursor.fetchone()
+        
+        if user:
+            return jsonify({'message': 'Trying to Logged in with the same email'}), 409
+        
+        try:
+            cursor.execute('INSERT INTO user_list (first_name, last_name, contact_number, email, password) VALUES (%s, %s, %s, %s, %s)', 
+            (fname, lname, contact_number, email, hashed_password))
+            conn.commit()
+            
+            return jsonify({'message': 'Registered Successfully!'}), 200
 
-### 🚀 LOGOUT ROUTE (Ensures Session is Cleared)
+        except:
+            return jsonify({'message': 'Failed to Register'}), 401
+            
+    except Exception as e:
+        return jsonify({'error': f'Database Error: str{e}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+        
+        
+
+#logout functionality
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.clear()  # 🔥 Completely clear the session
+    session.clear()  #clear the session
     return jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
 
-### 🚀 CHECK SESSION (Used in React `useEffect`)
+#check session
 @app.route('/user')
 def user():
     if "user" in session:
@@ -91,7 +131,7 @@ def user():
     else:
         return jsonify({'user': None, 'logged_in': False}), 200
 
-### 🚀 DASHBOARD ROUTE (Ensures Only Logged-in Users Access)
+#dashboard for logged in users
 @app.route('/dashboard')
 def dashboard():
     if "user" in session:

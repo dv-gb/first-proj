@@ -60,7 +60,12 @@ export default function LoginPage() {
             setLoginData({ ...loginData, password: e.target.value })
           }
         />
-        <button type="submit">Login</button>
+        <button
+          type="submit"
+          className="bg-gray-500 pl-3 pr-3 pt-1 pb-1 rounded-xl"
+        >
+          Login
+        </button>
       </form>
     </div>
   );
