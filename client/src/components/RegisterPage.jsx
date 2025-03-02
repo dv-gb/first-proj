@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     first_name: "",
     last_name: "",
@@ -8,6 +10,18 @@ export default function RegisterPage() {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    fetch("http://localhost:5000/user", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.logged_in) {
+          navigate("/dashboard");
+        }
+      });
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -18,10 +32,15 @@ export default function RegisterPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(registerData),
       });
       const data = await response.json();
-      console.log(data);
+      if (response.ok) {
+        navigate(data.redirect);
+      } else {
+        alert(data.message);
+      }
     } catch {
       console.log("Error Registering User");
     }

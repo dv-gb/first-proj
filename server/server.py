@@ -78,37 +78,47 @@ def login():
 #register
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    fname = data.get('first_name')
-    lname = data.get('last_name')
-    contact_number = data.get('contact_number')
-    email = data.get('email')
-    password = data.get('password')
-    
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    
-    conn = get_db_conn()
-    cursor = conn.cursor()
-    
-    #check if email already used
     try:
-        cursor.execute('SELECT * FROM user_list WHERE email = %s', 
-        (email,))
-        user = cursor.fetchone()
+        if 'user' in session:
+            return jsonify({'redirect': '/dashboard'}), 200
         
-        if user:
-            return jsonify({'message': 'Trying to Logged in with the same email'}), 409
-        
-        try:
-            cursor.execute('INSERT INTO user_list (first_name, last_name, contact_number, email, password) VALUES (%s, %s, %s, %s, %s)', 
-            (fname, lname, contact_number, email, hashed_password))
-            conn.commit()
-            
-            return jsonify({'message': 'Registered Successfully!'}), 200
+        data = request.get_json()
+        fname = data.get('first_name')
+        lname = data.get('last_name')
+        contact_number = data.get('contact_number')
+        email = data.get('email')
+        password = data.get('password')
 
-        except:
-            return jsonify({'message': 'Failed to Register'}), 401
-            
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # Database connection
+        conn = get_db_conn()
+        if not conn:
+            return jsonify({'message': 'Database connection failed'}), 500
+
+        cursor = conn.cursor()
+
+        # Check if the email already exists
+        cursor.execute('SELECT * FROM user_list WHERE email = %s', (email,))
+        user = cursor.fetchone()
+
+        if user:
+            return jsonify({'message': 'Email is already registered'}), 409
+
+        # Insert new user
+        cursor.execute(
+            'INSERT INTO user_list (first_name, last_name, contact_number, email, password) VALUES (%s, %s, %s, %s, %s)',
+            (fname, lname, contact_number, email, hashed_password)
+        )
+        conn.commit()
+
+        return jsonify({'message': 'Registered Successfully!', 'redirect': '/login'}), 201
+
+    except Exception as e:
+        return jsonify({'error': f'Registration failed: {str(e)}'}), 500
+
+
     except Exception as e:
         return jsonify({'error': f'Database Error: str{e}'}), 500
     finally:

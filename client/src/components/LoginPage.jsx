@@ -11,11 +11,11 @@ export default function LoginPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.logged_in) {
-          navigate("/dashboard"); // ✅ Redirect if session exists
+          navigate("/dashboard"); // Redirect if session exists
         }
       })
       .catch((err) => console.error("Session check failed:", err));
-  }, []); // 🔥 Ensure this runs only once on mount
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
