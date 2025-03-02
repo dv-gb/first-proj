@@ -1,58 +1,67 @@
-import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  const navigate = useNavigate();
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+
+  // 🔎 Always check if the user is logged in
+  useEffect(() => {
+    fetch("http://localhost:5000/user", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.logged_in) {
+          navigate("/dashboard"); // ✅ Redirect if session exists
+        }
+      })
+      .catch((err) => console.error("Session check failed:", err));
+  }, []); // 🔥 Ensure this runs only once on mount
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(loginData),
       });
+
       const data = await response.json();
-      console.log(data);
-    } catch {
-      console.log("Error Logging In");
+      if (response.ok) {
+        navigate(data.redirect); // ✅ Redirect to dashboard after login
+      } else {
+        alert(data.message); // Show error message
+      }
+    } catch (error) {
+      console.error("Error logging in:", error.message);
     }
   };
 
   return (
-    <>
-      <div className="h-[100vh] flex justify-center items-center">
-        <form onSubmit={handleLogin} className="flex flex-col items-center">
-          <h1>Login</h1>
-          <input
-            type="text"
-            placeholder="Email"
-            value={loginData.email}
-            onChange={(e) =>
-              setLoginData({ ...loginData, email: e.target.value })
-            }
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={loginData.password}
-            onChange={(e) =>
-              setLoginData({ ...loginData, password: e.target.value })
-            }
-          />
-          <button type="submit" className="bg-gray-500">
-            Login
-          </button>
-        </form>
-      </div>
-    </>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          required
+          value={loginData.email}
+          onChange={(e) =>
+            setLoginData({ ...loginData, email: e.target.value })
+          }
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          required
+          value={loginData.password}
+          onChange={(e) =>
+            setLoginData({ ...loginData, password: e.target.value })
+          }
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 }
