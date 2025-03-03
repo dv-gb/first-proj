@@ -7,6 +7,9 @@ import os
 from flask_bcrypt import Bcrypt
 from flask_session import Session  
 
+# Load environment variables
+load_dotenv()
+
 app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Allow credentials for session handling
 bcrypt = Bcrypt(app)
@@ -22,9 +25,6 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 Session(app) 
 
-# Load environment variables
-load_dotenv()
-
 # Database config
 DB_CONFIG = {
     'dbname': os.getenv('DB_NAME'),
@@ -34,7 +34,7 @@ DB_CONFIG = {
     'port': os.getenv('DB_PORT')
 }
 
-# connect db
+# Connect to database
 def get_db_conn():
     try:
         conn = psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
@@ -44,10 +44,10 @@ def get_db_conn():
         print(f'✖ Database connection failed: {e}')
         return None  
     
-# check db if connected
+# Check DB connection
 get_db_conn()
     
-#login
+# Login route
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -85,7 +85,7 @@ def login():
             cursor.close()
             conn.close()
 
-# register
+# Register route
 @app.route('/register', methods=['POST'])
 def register():
     try:
@@ -117,15 +117,14 @@ def register():
             cursor.close()
             conn.close()
 
-# check user
+# Check user session
 @app.route('/user')
 def user():
-    print("Session data:", session.get("user"))
     if "user" in session:
         return jsonify({'user': session["user"], 'logged_in': True}), 200
     return jsonify({'user': None, 'logged_in': False}), 200
 
-# check if admin or client
+# Client dashboard
 @app.route('/client/dashboard')
 def client_dashboard():
     if "user" not in session:
@@ -134,6 +133,7 @@ def client_dashboard():
         return jsonify({'message': 'Access denied', 'redirect': '/admin/dashboard'}), 403
     return jsonify({'message': 'Welcome to the Client Dashboard', 'user': session['user']}), 200
 
+# Admin dashboard
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if "user" not in session:
@@ -142,7 +142,7 @@ def admin_dashboard():
         return jsonify({'message': 'Access denied', 'redirect': '/client/dashboard'}), 403
     return jsonify({'message': 'Welcome to the Admin Dashboard', 'user': session['user']}), 200
 
-#logout
+# Logout route
 @app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
