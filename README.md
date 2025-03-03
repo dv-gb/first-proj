@@ -35,6 +35,4 @@
   </a>
 
 
-    <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" alt="PostgreSQL" width="40" height="40" style="border-radius: 8px;" />
-
 
