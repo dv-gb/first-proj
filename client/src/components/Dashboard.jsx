@@ -10,9 +10,9 @@ export default function Dashboard() {
       .then((res) => res.json())
       .then((data) => {
         if (!data.logged_in) {
-          navigate("/login");
+          navigate("/login"); //redirect to login if not logged in
         } else {
-          setUser(data.user);
+          setUser(data.user); // GET information of users
         }
       })
       .catch((err) => console.error("Session check failed:", err));
@@ -35,11 +35,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col justify-center items-center w-[100%] h-[100vh]">
       <h1 className="text-2xl font-bold mb-4">Welcome to Dashboard</h1>
 
       {user ? (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md w-1/3">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md w-[250px] ">
           <h2 className="text-xl font-semibold">User Information</h2>
           <p>
             <strong>First Name:</strong> {user.firstname}

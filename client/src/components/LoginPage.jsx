@@ -1,4 +1,4 @@
-import "./css/LoginRegister.css";
+import "./css/Login.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -49,7 +49,7 @@ export default function LoginPage() {
         className="absolute right-0 z-[0] w-[50%] top-0"
       />
       <form onSubmit={handleLogin} className="z-[1]">
-        <h2 className="text-xl font-semibold ">LOGIN</h2>
+        <h2 className="text-xl font-semibold ">Sign In</h2>
         <div className="flex w-[100%]">
           <label htmlFor="Email" className="text-[14px]">
             Email:
