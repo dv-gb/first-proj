@@ -13,11 +13,11 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="client/dashboard" element={<ClientDashboard />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/change_password" element={<ForgotPassword />} />
+          <Route path="#/client/dashboard" element={<ClientDashboard />} />
+          <Route path="#/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="#/login" element={<LoginPage />} />
+          <Route path="#/register" element={<RegisterPage />} />
+          <Route path="#/change_password" element={<ForgotPassword />} />
         </Routes>
       </Router>
     </>
