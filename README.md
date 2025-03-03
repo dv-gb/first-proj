@@ -3,8 +3,6 @@
 ### first simple web project
 
 ### technologies used
-
-<h3 align="left">Languages and Tools:</h3>
 <p align="left"> 
   <!-- Frontend -->
   <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer">
