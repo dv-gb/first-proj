@@ -104,8 +104,8 @@ def register():
 
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         cursor.execute(
-            'INSERT INTO user_list (first_name, last_name, username, contact_number, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-            (data['first_name'], data['last_name'], data['username'], data['contact_number'], data['email'], hashed_password, 'user')
+            'INSERT INTO user_list (first_name, last_name, username, contact_number, email, password) VALUES (%s, %s, %s, %s, %s, %s)',
+            (data['first_name'], data['last_name'], data['username'], data['contact_number'], data['email'], hashed_password)
         )
         conn.commit()
 
