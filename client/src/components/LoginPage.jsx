@@ -27,7 +27,9 @@ export default function LoginPage() {
   // 🔄 Redirect based on user role after checking session
   useEffect(() => {
     if (user) {
-      navigate(user.user_role === "admin" ? "/admin_dashboard" : "/dashboard");
+      navigate(
+        user.user_role === "admin" ? "/admin/dashboard" : "/client/dashboard"
+      );
     }
   }, [user, navigate]);
 
