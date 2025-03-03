@@ -11,18 +11,21 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Allow credentials for session handling
 bcrypt = Bcrypt(app)
 
-#Secure Session Configuration
+# Secure Session Configuration
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_USE_SIGNER"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = True 
 app.secret_key = os.getenv("SECRET_KEY")
 
-Session(app)  # Initialize session
+Session(app) 
 
 # Load environment variables
 load_dotenv()
 
-# Database configuration
+# Database config
 DB_CONFIG = {
     'dbname': os.getenv('DB_NAME'),
     'user': os.getenv('DB_USER'),
@@ -31,164 +34,119 @@ DB_CONFIG = {
     'port': os.getenv('DB_PORT')
 }
 
-### check session
-def check_session():
-    if "user" in session:
-        return jsonify({'redirect': '/dashboard'}), 200
-
+# connect db
 def get_db_conn():
     try:
         conn = psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
-        print('✔︎ Database connection successful')
+        print('✔ Database Connected')
         return conn
     except Exception as e:
-        print(f'✖︎ Database connection failed: {e}')
-        return None
-
-# Debug DB connection
+        print(f'✖ Database connection failed: {e}')
+        return None  
+    
+# check db if connected
 get_db_conn()
-
+    
 #login
 @app.route('/login', methods=['POST'])
 def login():
     try:
-        check_session()
-
         data = request.get_json()
-        email = data.get('email')
+        identifier = data.get('identifier')
         password = data.get('password')
-
         conn = get_db_conn()
         if not conn:
             return jsonify({'message': 'Database connection failed'}), 500
-
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM user_list WHERE email = %s', (email,))
+
+        cursor.execute('SELECT * FROM user_list WHERE email = %s OR username = %s',
+        (identifier, identifier))
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user['password'], password):
+            role = user['role'].lower()
             session["user"] = {
                 'firstname': user['first_name'],
                 'lastname': user['last_name'],
+                'username': user['username'],
                 'contact': user['contact_number'],
-                'email': user['email']
+                'email': user['email'],
+                'user_role': role
             }
-            return jsonify({'message': 'Login successful', 'redirect': '/dashboard'}), 200
+
+            redirect_url = f"/{role}/dashboard?dashboard={role}"
+            return jsonify({'message': 'Login successful', 'redirect': redirect_url}), 200
         else:
             return jsonify({'message': 'Wrong Email or Password'}), 401
-
     except Exception as e:
         return jsonify({'error': f'Error: {str(e)}'}), 500
-
     finally:
-        cursor.close()
-        conn.close()
-        
-#register
+        if conn:
+            cursor.close()
+            conn.close()
+
+# register
 @app.route('/register', methods=['POST'])
 def register():
     try:
-        check_session()
-        
         data = request.get_json()
-        fname = data.get('first_name')
-        lname = data.get('last_name')
-        contact_number = data.get('contact_number')
-        email = data.get('email')
-        password = data.get('password')
-
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        # Database connection
         conn = get_db_conn()
         if not conn:
             return jsonify({'message': 'Database connection failed'}), 500
-
         cursor = conn.cursor()
 
-        # Check if the email already exists
-        cursor.execute('SELECT * FROM user_list WHERE email = %s', (email,))
-        user = cursor.fetchone()
+        cursor.execute('SELECT * FROM user_list WHERE email = %s OR username = %s',
+        (data['email'], data['username']))
+        if cursor.fetchone():
+            return jsonify({'message': 'Email or Username already taken'}), 409
+        if len(data['password']) < 8:
+            return jsonify({'message': 'Password should be at least 8 characters'}), 400
 
-        if user:
-            return jsonify({'message': 'Email is already registered'}), 409
-
-        # Insert new user
+        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         cursor.execute(
-            'INSERT INTO user_list (first_name, last_name, contact_number, email, password) VALUES (%s, %s, %s, %s, %s)',
-            (fname, lname, contact_number, email, hashed_password)
+            'INSERT INTO user_list (first_name, last_name, username, contact_number, email, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+            (data['first_name'], data['last_name'], data['username'], data['contact_number'], data['email'], hashed_password, 'user')
         )
         conn.commit()
 
         return jsonify({'message': 'Registered Successfully!', 'redirect': '/login'}), 201
-
     except Exception as e:
         return jsonify({'error': f'Registration failed: {str(e)}'}), 500
-
-
-    except Exception as e:
-        return jsonify({'error': f'Database Error: str{e}'}), 500
     finally:
-        cursor.close()
-        conn.close()
-        
-        
+        if conn:
+            cursor.close()
+            conn.close()
 
-#logout functionality
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.clear()  #clear the session
-    return jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
-
-#check session
+# check user
 @app.route('/user')
 def user():
+    print("Session data:", session.get("user"))
     if "user" in session:
         return jsonify({'user': session["user"], 'logged_in': True}), 200
-    else:
-        return jsonify({'user': None, 'logged_in': False}), 200
-    
-#update password
-@app.route('/change_password', methods=['POST'])
-def change_password():
-    try:
-        check_session()
-        
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        newPassword = data.get('new_password')
-        
-        conn = get_db_conn()
-        cursor = conn.cursor()
-        
-        cursor.execute('SELECT * FROM user_list WHERE email = %s', (email,))
-        user = cursor.fetchone()
-        
-        if user and bcrypt.check_password_hash(user['password'], password):
-            
-            hashed_new_password = bcrypt.generate_password_hash(newPassword).decode('utf-8')
-            cursor.execute('UPDATE user_list SET password = %s WHERE email = %s', (hashed_new_password, email))
-            conn.commit()
-            
-            return jsonify({'message': 'password changed successfully'}), 200
-        else:
-            return jsonify({'message': 'Incorrect Email or Password'}), 401
-            
-    except Exception as e:
-        return jsonify({'error': f'Database Error: str{e}'}), 500
-        
-#dashboard for logged in users
-@app.route('/dashboard')
-def dashboard():
-    if "user" in session:
-        return jsonify({'message': 'Welcome to the Dashboard', 'user': session['user']}), 200
-    else:
-        return jsonify({'message': 'Unauthorized. Please login', 'redirect': '/login'}), 401
-    
+    return jsonify({'user': None, 'logged_in': False}), 200
 
+# check if admin or client
+@app.route('/client/dashboard')
+def client_dashboard():
+    if "user" not in session:
+        return jsonify({'message': 'Session expired', 'redirect': '/login'}), 403
+    if session['user']['user_role'] != "user":
+        return jsonify({'message': 'Access denied', 'redirect': '/admin/dashboard'}), 403
+    return jsonify({'message': 'Welcome to the Client Dashboard', 'user': session['user']}), 200
 
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if "user" not in session:
+        return jsonify({'message': 'Session expired', 'redirect': '/login'}), 403
+    if session['user']['user_role'] != "admin":
+        return jsonify({'message': 'Access denied', 'redirect': '/client/dashboard'}), 403
+    return jsonify({'message': 'Welcome to the Admin Dashboard', 'user': session['user']}), 200
+
+#logout
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logged out successfully', 'redirect': '/login'}), 200
 
 if __name__ == "__main__":
-    app.run(host="localhost", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

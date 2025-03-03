@@ -8,6 +8,7 @@ export default function RegisterPage() {
   const [registerData, setRegisterData] = useState({
     first_name: "",
     last_name: "",
+    username: "",
     contact_number: "",
     email: "",
     password: "",
@@ -82,6 +83,19 @@ export default function RegisterPage() {
             className="lname"
           />
         </div>
+        <input
+          type="text"
+          placeholder="Username"
+          value={registerData.username}
+          onChange={(e) =>
+            setRegisterData({
+              ...registerData,
+              username: e.target.value,
+            })
+          }
+          required
+        />
+
         <input
           type="text"
           placeholder="Contact Number"

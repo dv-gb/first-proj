@@ -6,19 +6,31 @@ import { CFormCheck } from "@coreui/react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loginData, setLoginData] = useState({
+    email: "",
+    username: "",
+    password: "",
+  });
+  const [user, setUser] = useState(null);
 
-  // 🔎 Always check if the user is logged in
+  // 🔎 Check if user is already logged in (avoids multiple fetch calls)
   useEffect(() => {
     fetch("http://localhost:5000/user", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.logged_in) {
-          navigate("/dashboard"); // Redirect if session exists
+          setUser(data.user);
         }
       })
       .catch((err) => console.error("Session check failed:", err));
   }, []);
+
+  // 🔄 Redirect based on user role after checking session
+  useEffect(() => {
+    if (user) {
+      navigate(user.user_role === "admin" ? "/admin_dashboard" : "/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,9 +44,10 @@ export default function LoginPage() {
 
       const data = await response.json();
       if (response.ok) {
-        navigate(data.redirect); // ✅ Redirect to dashboard after login
+        setUser(data.user); // ✅ Store user data before redirecting
+        navigate(data.redirect);
       } else {
-        alert(data.message); // Show error message
+        alert(data.message); // ❌ Show error message
       }
     } catch (error) {
       console.error("Error logging in:", error.message);
@@ -49,22 +62,22 @@ export default function LoginPage() {
         className="absolute right-0 z-[0] w-[50%] top-0"
       />
       <form onSubmit={handleLogin} className="z-[1]">
-        <h2 className="text-xl font-semibold ">Sign In</h2>
+        <h2 className="text-xl font-semibold">Sign In</h2>
         <div className="flex w-[100%]">
-          <label htmlFor="Email" className="text-[14px]">
-            Email:
+          <label htmlFor="identifier" className="text-[14px]">
+            Email or Username:
           </label>
         </div>
         <input
-          type="email"
+          type="text"
           required
-          value={loginData.email}
+          value={loginData.identifier} // Use a single state key
           onChange={(e) =>
-            setLoginData({ ...loginData, email: e.target.value })
+            setLoginData({ ...loginData, identifier: e.target.value })
           }
         />
         <div className="flex w-[100%] pt-10">
-          <label htmlFor="Email" className="text-[15px]">
+          <label htmlFor="Password" className="text-[15px]">
             Password:
           </label>
         </div>
@@ -91,7 +104,7 @@ export default function LoginPage() {
         <button type="submit" className="w-[100%]">
           Login
         </button>
-        <p className="text-[11px] ">
+        <p className="text-[11px]">
           - Don't have an account?{" "}
           <span>
             <Link to={"/register"}>Create new</Link>

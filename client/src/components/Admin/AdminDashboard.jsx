@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
+export default function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("http://localhost:5000/user", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
+        console.log("Fetched User Data:", data); // Debugging
+
         if (!data.logged_in) {
-          navigate("/login"); //redirect to login if not logged in
+          navigate("/login");
+        } else if (data.user.user_role !== "admin") {
+          navigate("/client/dashboard?dashboard=client", { replace: true }); // Fixed redirection
         } else {
-          setUser(data.user); // GET information of users
+          setUser(data.user);
         }
       })
-      .catch((err) => console.error("Session check failed:", err));
-  }, []);
+      .catch((err) => console.error("Session check failed:", err))
+      .finally(() => setLoading(false));
+  }, [navigate]);
 
   const handleLogout = async () => {
     try {
@@ -34,12 +40,16 @@ export default function Dashboard() {
     }
   };
 
-  return (
-    <div className="flex flex-col justify-center items-center w-[100%] h-[100vh]">
-      <h1 className="text-2xl font-bold mb-4">Welcome to Dashboard</h1>
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-      {user ? (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md w-[250px] ">
+  return (
+    <div className="flex flex-col justify-center items-center w-full h-screen">
+      <h1 className="text-2xl font-bold mb-4">Welcome Admin</h1>
+
+      {user && (
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md w-[250px]">
           <h2 className="text-xl font-semibold">User Information</h2>
           <p>
             <strong>First Name:</strong> {user.firstname}
@@ -48,14 +58,15 @@ export default function Dashboard() {
             <strong>Last Name:</strong> {user.lastname}
           </p>
           <p>
-            <strong>Contact Number:</strong> {user.contact}
+            <strong>Username:</strong> {user.username}
+          </p>
+          <p>
+            <strong>Contact:</strong> {user.contact}
           </p>
           <p>
             <strong>Email:</strong> {user.email}
           </p>
         </div>
-      ) : (
-        <p>Loading user data...</p>
       )}
 
       <button
