@@ -7,8 +7,7 @@ import { CFormCheck } from "@coreui/react";
 export default function LoginPage() {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
-    email: "",
-    username: "",
+    identifier: "",
     password: "",
   });
   const [user, setUser] = useState(null);
@@ -28,9 +27,7 @@ export default function LoginPage() {
   // 🔄 Redirect based on user role after checking session
   useEffect(() => {
     if (user) {
-      navigate(
-        user.user_role === "admin" ? "#/admin_dashboard" : "#/dashboard"
-      );
+      navigate(user.user_role === "admin" ? "/admin_dashboard" : "/dashboard");
     }
   }, [user, navigate]);
 
@@ -46,10 +43,12 @@ export default function LoginPage() {
 
       const data = await response.json();
       if (response.ok) {
-        setUser(data.user); // ✅ Store user data before redirecting
-        navigate(data.redirect);
+        setUser(data.user);
+        setTimeout(() => {
+          navigate(data.redirect);
+        }, 500);
       } else {
-        alert(data.message); // ❌ Show error message
+        alert(data.message);
       }
     } catch (error) {
       console.error("Error logging in:", error.message);
