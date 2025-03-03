@@ -74,7 +74,7 @@ def login():
                 'user_role': role
             }
 
-            redirect_url = f"/{role}/dashboard?dashboard={role}"
+            redirect_url = f"/{role}/dashboard"
             return jsonify({'message': 'Login successful', 'redirect': redirect_url}), 200
         else:
             return jsonify({'message': 'Wrong Email or Password'}), 401
