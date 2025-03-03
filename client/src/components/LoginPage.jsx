@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   // 🔎 Check if user is already logged in (avoids multiple fetch calls)
   useEffect(() => {
-    fetch("http://localhost:5000/user", { credentials: "include" })
+    fetch("https://flask-59e1.onrender.com/user", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.logged_in) {
@@ -35,7 +35,7 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/login", {
+      const response = await fetch("https://flask-59e1.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -7,7 +7,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/user", { credentials: "include" })
+    fetch("https://flask-59e1.onrender.com/user", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (!data.logged_in) {
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/logout", {
+      const response = await fetch("https://flask-59e1.onrender.com/logout", {
         method: "POST",
         credentials: "include",
       });

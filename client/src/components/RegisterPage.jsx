@@ -15,7 +15,7 @@ export default function RegisterPage() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:5000/user", {
+    fetch("https://flask-59e1.onrender.com/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -30,7 +30,7 @@ export default function RegisterPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch("https://flask-59e1.onrender.com/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
