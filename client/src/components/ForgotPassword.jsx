@@ -13,7 +13,7 @@ export default function ForgotPassword() {
   });
 
   useEffect(() => {
-    fetch("flask-production-e8d1.up.railway.app/user", {
+    fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -27,7 +27,7 @@ export default function ForgotPassword() {
   const handleLogin = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "flask-production-e8d1.up.railway.app/change_password",
+      "https://flask-production-e8d1.up.railway.app/change_password",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

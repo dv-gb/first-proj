@@ -15,7 +15,7 @@ export default function RegisterPage() {
   });
 
   useEffect(() => {
-    fetch("flask-production-e8d1.up.railway.app/user", {
+    fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -31,7 +31,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        "flask-production-e8d1.up.railway.app/register",
+        "https://flask-production-e8d1.up.railway.app/register",
         {
           method: "POST",
           headers: {

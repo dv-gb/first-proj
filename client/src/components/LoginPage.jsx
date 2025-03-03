@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   // 🔎 Check if user is already logged in (avoids multiple fetch calls)
   useEffect(() => {
-    fetch("flask-production-e8d1.up.railway.app/user", {
+    fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -39,7 +39,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "flask-production-e8d1.up.railway.app/login",
+        "https://flask-production-e8d1.up.railway.app/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

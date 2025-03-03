@@ -7,7 +7,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("flask-production-e8d1.up.railway.app/user", {
+    fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -27,7 +27,7 @@ export default function Dashboard() {
   const handleLogout = async () => {
     try {
       const response = await fetch(
-        "flask-production-e8d1.up.railway.app/logout",
+        "https://flask-production-e8d1.up.railway.app/logout",
         {
           method: "POST",
           credentials: "include",
