@@ -66,7 +66,9 @@ export default function Dashboard() {
           </p>
         </div>
       ) : (
-        <p>Loading user data...</p>
+        <div className="flex justify-center items-center h-screen">
+          <p className="text-lg font-semibold">Checking session...</p>
+        </div>
       )}
 
       <button
