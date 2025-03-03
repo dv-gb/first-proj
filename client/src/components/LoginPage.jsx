@@ -14,7 +14,9 @@ export default function LoginPage() {
 
   // 🔎 Check if user is already logged in (avoids multiple fetch calls)
   useEffect(() => {
-    fetch("https://flask-59e1.onrender.com/user", { credentials: "include" })
+    fetch("flask-production-e8d1.up.railway.app/user", {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.logged_in) {
@@ -36,12 +38,15 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://flask-59e1.onrender.com/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(loginData),
-      });
+      const response = await fetch(
+        "flask-production-e8d1.up.railway.app/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(loginData),
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {

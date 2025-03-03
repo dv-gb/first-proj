@@ -15,7 +15,7 @@ export default function RegisterPage() {
   });
 
   useEffect(() => {
-    fetch("https://flask-59e1.onrender.com/user", {
+    fetch("flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -30,14 +30,17 @@ export default function RegisterPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://flask-59e1.onrender.com/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(registerData),
-      });
+      const response = await fetch(
+        "flask-production-e8d1.up.railway.app/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(registerData),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         navigate(data.redirect);

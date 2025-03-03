@@ -7,7 +7,9 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://flask-59e1.onrender.com/user", { credentials: "include" })
+    fetch("flask-production-e8d1.up.railway.app/user", {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched User Data:", data); // Debugging
@@ -26,10 +28,13 @@ export default function AdminDashboard() {
 
   const handleLogout = useCallback(async () => {
     try {
-      const response = await fetch("https://flask-59e1.onrender.com/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch(
+        "flask-production-e8d1.up.railway.app/logout",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
       console.log("Logout response:", data); // Debugging
