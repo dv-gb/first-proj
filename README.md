@@ -2,5 +2,5 @@
 
 ### first web project
 
-## technologies used
+### technologies used
 ReactJS, Flask, CSS, TailwindCSS 
