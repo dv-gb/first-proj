@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
@@ -14,7 +14,7 @@ export default function AdminDashboard() {
 
         if (!data.logged_in) {
           navigate("/login");
-        } else if (data.user.user_role !== "admin") {
+        } else if (data.user?.user_role !== "admin") {
           navigate("/client/dashboard", { replace: true }); // Fixed redirection
         } else {
           setUser(data.user);
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
       .finally(() => setLoading(false));
   }, [navigate]);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       const response = await fetch("https://flask-59e1.onrender.com/logout", {
         method: "POST",
@@ -32,16 +32,19 @@ export default function AdminDashboard() {
       });
 
       const data = await response.json();
-      if (data.redirect) {
-        navigate(data.redirect);
-      }
+      console.log("Logout response:", data); // Debugging
+      navigate("/login"); // Explicitly navigate to login
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };
+  }, [navigate]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-lg font-semibold">Checking session...</p>
+      </div>
+    );
   }
 
   return (
