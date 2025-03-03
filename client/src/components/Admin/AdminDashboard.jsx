@@ -15,7 +15,7 @@ export default function AdminDashboard() {
         if (!data.logged_in) {
           navigate("/login");
         } else if (data.user.user_role !== "admin") {
-          navigate("#/client/dashboard", { replace: true }); // Fixed redirection
+          navigate("/client/dashboard", { replace: true }); // Fixed redirection
         } else {
           setUser(data.user);
         }

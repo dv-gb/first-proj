@@ -13,7 +13,7 @@ export default function Dashboard() {
         if (!data.logged_in) {
           navigate("/login"); // Redirect to login if not logged in
         } else if (data.user.user_role === "admin") {
-          navigate("#/admin/dashboard", { replace: true }); // Fixed redirection
+          navigate("/admin/dashboard", { replace: true }); // Fixed redirection
         } else {
           setUser(data.user); // Allow users to stay
         }
