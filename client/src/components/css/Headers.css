@@ -1,3 +1,5 @@
+@import "./base.css";
+
 .main-header {
   padding: 15px 9vw;
   background-color: #f8f8f8;
@@ -8,6 +10,13 @@
   background-color: #383838;
   padding: 8px 20px;
   margin: 0 0px;
+}
+
+.menu-icon {
+  background-color: #f8f8f8;
+  color: var(--bl);
+  font-size: x-large;
+  padding: 0px 10px;
 }
 
 .logo {
@@ -31,7 +40,8 @@
     transition: height 0.3s ease-in-out;
     justify-content: center;
     align-items: center;
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    z-index: 0;
   }
 
   .mobile.open {
