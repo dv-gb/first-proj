@@ -12,6 +12,11 @@
   },
   "dependencies": {
     "@coreui/react": "^5.5.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
     "react": "^19.0.0",
