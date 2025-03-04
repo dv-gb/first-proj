@@ -6,6 +6,7 @@ import RegisterPage from "./components/RegisterPage";
 import ForgotPassword from "./components/ForgotPassword";
 import Home from "./components/Home";
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import Apartment from "./components/Apartment";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/apartments" element={<Apartment />} />
           <Route path="/client/dashboard" element={<ClientDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/login" element={<LoginPage />} />
