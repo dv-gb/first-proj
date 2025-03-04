@@ -76,7 +76,7 @@ export default function LoginPage() {
         alt="bg-card"
         className="bg-mobile absolute right-0 w-[50%] top-0 z-[-1]"
       />
-      <div className="login-body h-[100vh] w-[100%] bg-[#f8f8f8] flex justify-center items-center">
+      <div className="login-body h-[90vh] w-[100%] bg-[#f8f8f8] flex justify-center items-center">
         <form onSubmit={handleLogin} className="z-[0]">
           <h2 className="text-xl font-semibold">Sign In</h2>
           <div className="flex w-[100%]">
