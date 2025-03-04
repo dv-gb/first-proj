@@ -26,7 +26,7 @@ export default function LoginPage() {
       .catch((err) => console.error("Session check failed:", err));
   }, []);
 
-  // 🔄 Redirect based on user role after checking session
+  // Redirect based on user role after checking session
   useEffect(() => {
     if (user) {
       navigate(
