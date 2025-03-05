@@ -2,7 +2,7 @@
   "name": "client",
   "private": true,
   "version": "0.0.0",
-  "proxy": "http://localhost:5000",
+  "proxy": "https://flask-production-e8d1.up.railway.app",
   "type": "module",
   "scripts": {
     "dev": "vite",

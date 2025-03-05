@@ -13,6 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Allow credentials for session handling
 bcrypt = Bcrypt(app)
+Session(app) 
 
 # Secure Session Configuration
 app.config["SESSION_TYPE"] = "filesystem"
@@ -23,7 +24,6 @@ app.config["SESSION_COOKIE_SAMESITE"] = "None"
 app.config["SESSION_COOKIE_SECURE"] = True 
 app.secret_key = os.getenv("SECRET_KEY")
 
-Session(app) 
 
 # Database config
 DB_CONFIG = {
