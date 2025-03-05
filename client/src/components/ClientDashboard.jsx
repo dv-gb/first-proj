@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = "Client - Dashboard";
     fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })

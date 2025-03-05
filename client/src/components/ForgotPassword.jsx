@@ -14,6 +14,7 @@ export default function ForgotPassword() {
   });
 
   useEffect(() => {
+    document.title = "Forgot Password";
     fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
