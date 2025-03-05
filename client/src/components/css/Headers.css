@@ -40,8 +40,8 @@
     transition: height 0.3s ease-in-out;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
-    z-index: 0;
+    background-color: none;
+    z-index: 1;
   }
 
   .mobile.open {

@@ -82,16 +82,10 @@ span {
   top: -3px;
 }
 
-.bg-mobile {
-  display: none;
-}
-
 @media (max-width: 767px) {
-  .bg-mobile {
-    display: block;
-  }
-
   .bg-desktop {
-    display: none;
+    display: block;
+    top: 60px;
+    z-index: 0;
   }
 }

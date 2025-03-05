@@ -107,7 +107,7 @@ def register():
         if len(data['password']) < 8:
             return jsonify({'message': 'Password should be at least 8 characters'}), 400
 
-        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(data['password'], 12).decode('utf-8')
         cursor.execute(
             'INSERT INTO user_list (first_name, last_name, username, contact_number, email, password) VALUES (%s, %s, %s, %s, %s, %s)',
             (data['first_name'], data['last_name'], data['username'], data['contact_number'], data['email'], hashed_password)
