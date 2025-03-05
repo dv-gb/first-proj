@@ -55,6 +55,7 @@ export default function RegisterPage() {
 
   return (
     <>
+      <title>Register</title>
       <Headers />
       <div className="reg-body h-[100vh] w-[100%] bg-[#f8f8f8] flex flex-col justify-center items-center">
         <img
