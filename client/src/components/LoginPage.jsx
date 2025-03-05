@@ -15,6 +15,7 @@ export default function LoginPage() {
 
   // 🔎 Check if user is already logged in (avoids multiple fetch calls)
   useEffect(() => {
+    document.title = "Login";
     fetch("https://flask-production-e8d1.up.railway.app/user", {
       credentials: "include",
     })
